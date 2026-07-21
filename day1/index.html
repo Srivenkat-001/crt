@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Expense tracker</h1>
+    <h3>Expence Name</h3>
+    <input type="text" id="en" />
+    <h3>Amount</h3>
+    <input type="number" id="a" />
+    <h3>Category</h3>
+    <select id="c">
+      <option>Food</option>
+      <option>Travel</option>
+      <option>Shopping</option>
+      <option>Other</option>
+    </select>
+    <h3>Date</h3>
+    <input type="date" id="date" />
+    <br /><br />
+    <button id="addexpenses">Add Expense</button>
+    <h1 id="te">Total Expense:0</h1>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Category</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="l"></tbody>
+    </table>
+  </body>
+  <script>
+    const en = document.getElementById("en");
+    const a = document.getElementById("a");
+    const c = document.getElementById("c");
+    const date = document.getElementById("date");
+    const addexpenses = document.getElementById("addexpenses");
+    const te = document.getElementById("te");
+    const l = document.getElementById("l");
+    addexpenses.addEventListener("click", () => {
+      const tr = document.createElement("tr");
+      const th1 = document.createElement("td");
+      const th2 = document.createElement("td");
+      const th3 = document.createElement("td");
+      const th4 = document.createElement("td");
+      th1.textContent = `${en.value}`;
+      th2.textContent = `${a.value}`;
+      th3.textContent = `${c.value}`;
+      th4.textContent = `${date.value}`;
+    //   te.textContent=te.textContent)+a.value
+      tr.appendChild(th1);
+      tr.appendChild(th2);
+      tr.appendChild(th3);
+      tr.appendChild(th4);
+      const b=document.createElement("button")
+      b.textContent="delete"
+      b.addEventListener("click",()=>{
+        tr.remove()
+      })
+      tr.append(b)
+      l.appendChild(tr);
+    });
+  </script>
+</html>
