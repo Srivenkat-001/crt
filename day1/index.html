@@ -3,69 +3,521 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Grand Line Expense Tracker ☠️</title>
+    <style>
+      /* --- Color Palette & Variables --- */
+      :root {
+        --op-red: rgb(220, 38, 38);
+        --op-dark-red: rgb(153, 27, 27);
+        --op-gold: rgb(250, 204, 21);
+        --op-light-gold: rgb(254, 240, 138);
+        --op-navy: rgb(15, 23, 42);
+        --glass-bg: rgba(15, 23, 42, 0.85);
+        --glass-card: rgba(30, 41, 59, 0.7);
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        /* Full screen One Piece character background */
+        background: url('https://images.alphacoders.com/132/1328396.jpeg') no-repeat center center fixed;
+        background-size: cover;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        color: var(--white);
+        position: relative;
+      }
+
+      /* Dark overlay to make content readable over background */
+      body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 0;
+      }
+
+      /* Container Card */
+      .app-container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 950px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 24px;
+        border: 3px solid var(--op-gold);
+        box-shadow: 0 0 30px rgba(250, 204, 21, 0.3), 0 20px 40px rgba(0, 0, 0, 0.8);
+        overflow: hidden;
+        animation: containerEntrance 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      @keyframes containerEntrance {
+        from {
+          opacity: 0;
+          transform: scale(0.85) translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, var(--op-dark-red), var(--op-navy));
+        padding: 20px;
+        text-align: center;
+        border-bottom: 3px solid var(--op-gold);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .header h1 {
+        font-size: 2.2rem;
+        color: var(--op-gold);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        letter-spacing: 1px;
+      }
+
+      .luffy-badge {
+        background: var(--op-red);
+        color: var(--white);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: bold;
+        border: 1px solid var(--op-gold);
+      }
+
+      /* Total Expense Display */
+      .total-banner {
+        background: linear-gradient(90deg, rgba(250, 204, 21, 0.2), rgba(220, 38, 38, 0.2));
+        border-left: 5px solid var(--op-gold);
+        border-right: 5px solid var(--op-gold);
+        margin: 20px 25px 0 25px;
+        padding: 15px 25px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .total-banner h2 {
+        font-size: 1.2rem;
+        color: var(--op-light-gold);
+      }
+
+      .total-banner .amount {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--op-gold);
+        text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+        animation: glowPulse 2s infinite alternate;
+      }
+
+      @keyframes glowPulse {
+        from { transform: scale(1); filter: drop-shadow(0 0 2px var(--op-gold)); }
+        to { transform: scale(1.05); filter: drop-shadow(0 0 8px var(--op-gold)); }
+      }
+
+      /* Split Layout Wrapper */
+      .split-layout {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        gap: 20px;
+        padding: 25px;
+      }
+
+      /* Left Side: Input Form */
+      .form-section {
+        background: var(--glass-card);
+        padding: 20px;
+        border-radius: 16px;
+        border: 1.5px solid rgba(250, 204, 21, 0.3);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        animation: slideLeft 0.6s ease-out;
+      }
+
+      @keyframes slideLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      .form-section h3 {
+        color: var(--op-gold);
+        font-size: 1.1rem;
+        border-bottom: 2px solid var(--op-red);
+        padding-bottom: 6px;
+        margin-bottom: 5px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .input-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--op-light-gold);
+      }
+
+      input, select {
+        padding: 11px 14px;
+        border: 2px solid rgba(250, 204, 21, 0.4);
+        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.8);
+        color: var(--white);
+        font-size: 0.95rem;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      input:focus, select:focus {
+        border-color: var(--op-gold);
+        box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);
+        background: rgba(15, 23, 42, 0.95);
+      }
+
+      /* Submit Button */
+      .btn-add {
+        margin-top: 10px;
+        background: linear-gradient(135deg, var(--op-red), var(--op-dark-red));
+        color: var(--op-light-gold);
+        border: 2px solid var(--op-gold);
+        padding: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+      }
+
+      .btn-add:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 20px rgba(250, 204, 21, 0.5);
+        background: linear-gradient(135deg, var(--op-dark-red), var(--op-red));
+      }
+
+      .btn-add:active {
+        transform: translateY(0);
+      }
+
+      /* Right Side: Table Section */
+      .table-section {
+        background: var(--glass-card);
+        padding: 20px;
+        border-radius: 16px;
+        border: 1.5px solid rgba(250, 204, 21, 0.3);
+        overflow-x: auto;
+        animation: slideRight 0.6s ease-out;
+      }
+
+      @keyframes slideRight {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+      }
+
+      th {
+        background: var(--op-red);
+        color: var(--op-light-gold);
+        padding: 10px 12px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-align: left;
+      }
+
+      th:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+      th:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+      tbody tr {
+        background: rgba(15, 23, 42, 0.7);
+        transition: all 0.3s ease;
+        animation: rowFadeIn 0.4s ease-out forwards;
+      }
+
+      @keyframes rowFadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      tbody tr:hover {
+        background: rgba(250, 204, 21, 0.15);
+        transform: scale(1.01);
+      }
+
+      tbody tr.editing-row {
+        border: 2px dashed var(--op-gold);
+        background: rgba(220, 38, 38, 0.25);
+      }
+
+      td {
+        padding: 12px;
+        font-size: 0.9rem;
+        color: var(--white);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+      td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+      /* Action Buttons */
+      .action-btns {
+        display: flex;
+        gap: 6px;
+      }
+
+      .btn-action {
+        border: none;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-edit {
+        background: var(--op-gold);
+        color: var(--op-navy);
+      }
+
+      .btn-edit:hover {
+        background: var(--op-light-gold);
+        transform: scale(1.08);
+      }
+
+      .btn-delete {
+        background: var(--op-red);
+        color: var(--white);
+      }
+
+      .btn-delete:hover {
+        background: var(--op-dark-red);
+        transform: scale(1.08);
+      }~
+
+      /* Responsive Layout */
+      @media (max-width: 768px) {~
+        .split-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .header h1 {
+          font-size: 1.6rem;
+        }
+
+        .total-banner {
+          flex-direction: column;
+          gap: 6px;
+          text-align: center;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>Expense tracker</h1>
-    <h3>Expence Name</h3>
-    <input type="text" id="en" />
-    <h3>Amount</h3>
-    <input type="number" id="a" />
-    <h3>Category</h3>
-    <select id="c">
-      <option>Food</option>
-      <option>Travel</option>
-      <option>Shopping</option>
-      <option>Other</option>
-    </select>
-    <h3>Date</h3>
-    <input type="date" id="date" />
-    <br /><br />
-    <button id="addexpenses">Add Expense</button>
-    <h1 id="te">Total Expense:0</h1>
-    <table border="1">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Amount</th>
-          <th>Category</th>
-          <th>Date</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="l"></tbody>
-    </table>
+    <div class="app-container">
+      <div class="header">
+        <h1>Expense Tracker</h1>
+        <span class="luffy-badge">Straw Hat Pirates 🏴‍☠️</span>
+      </div>
+
+      <div class="total-banner">
+        <h2>Total Crew Expenses</h2>
+        <div class="amount">฿<span id="te">0</span></div>
+      </div>
+
+      <div class="split-layout">
+        <!-- LEFT: Input Entry Panel -->
+        <div class="form-section">
+          <h3>Add New Bounty Entry</h3>
+
+          <div class="input-group">
+            <label for="en">Expense Name</label>
+            <input type="text" id="en" placeholder="e.g., Meat, Ship Repair" />
+          </div>
+
+          <div class="input-group">
+            <label for="a">Amount (Belly ฿)</label>
+            <input type="number" id="a" placeholder="e.g., 5000" />
+          </div>
+
+          <div class="input-group">
+            <label for="c">Category</label>
+            <select id="c">
+              <option>Food</option>
+              <option>Travel</option>
+              <option>Shopping</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="date">Date</label>
+            <input type="date" id="date" />
+          </div>
+
+          <button id="addexpenses" class="btn-add">🏴‍☠️ Add Expense</button>
+        </div>
+
+        <!-- RIGHT: Expense Log Table Panel -->
+        <div class="table-section">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="l"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const en = document.getElementById("en");
+      const a = document.getElementById("a");
+      const c = document.getElementById("c");
+      const date = document.getElementById("date");
+      const addexpenses = document.getElementById("addexpenses");
+      const te = document.getElementById("te");
+      const l = document.getElementById("l");
+
+      let sum = 0;
+      let editingRow = null;
+
+      addexpenses.addEventListener("click", () => {
+        if (!en.value || !a.value || !date.value) {
+          alert("Please fill in all fields!");
+          return;
+        }
+
+        const newAmount = Number(a.value);
+
+        // --- UPDATE MODE ---
+        if (editingRow !== null) {
+          const oldAmount = Number(editingRow.getAttribute("data-amount"));
+
+          // Calculate net change for total sum
+          sum = sum - oldAmount + newAmount;
+          te.textContent = sum;
+
+          // Update table cell values
+          editingRow.children[0].textContent = en.value;
+          editingRow.children[1].textContent = `฿${newAmount}`;
+          editingRow.children[2].textContent = c.value;
+          editingRow.children[3].textContent = date.value;
+          editingRow.setAttribute("data-amount", newAmount);
+
+          // Reset Edit State
+          editingRow.classList.remove("editing-row");
+          editingRow = null;
+          addexpenses.textContent = "🏴‍☠️ Add Expense";
+        } 
+        // --- ADD MODE ---
+        else {
+          const tr = document.createElement("tr");
+          tr.setAttribute("data-amount", newAmount);
+
+          const td1 = document.createElement("td");
+          const td2 = document.createElement("td");
+          const td3 = document.createElement("td");
+          const td4 = document.createElement("td");
+          const actionTd = document.createElement("td");
+
+          actionTd.className = "action-btns";
+
+          td1.textContent = en.value;
+          td2.textContent = `฿${newAmount}`;
+          td3.textContent = c.value;
+          td4.textContent = date.value;
+
+          tr.appendChild(td1);
+          tr.appendChild(td2);
+          tr.appendChild(td3);
+          tr.appendChild(td4);
+
+          // Edit Button
+          const ed = document.createElement("button");
+          ed.textContent = "Edit";
+          ed.className = "btn-action btn-edit";
+          ed.addEventListener("click", () => {
+            if (editingRow) editingRow.classList.remove("editing-row");
+
+            // Populate form with current values (keeps old row in table visible)
+            en.value = td1.textContent;
+            a.value = tr.getAttribute("data-amount");
+            c.value = td3.textContent;
+            date.value = td4.textContent;
+
+            editingRow = tr;
+            tr.classList.add("editing-row");
+            addexpenses.textContent = "💾 Save Expense";
+          });
+
+          // Delete Button
+          const b = document.createElement("button");
+          b.textContent = "Delete";
+          b.className = "btn-action btn-delete";
+          b.addEventListener("click", () => {
+            if (editingRow === tr) {
+              editingRow = null;
+              addexpenses.textContent = "🏴‍☠️ Add Expense";
+            }
+            const rowAmt = Number(tr.getAttribute("data-amount"));
+            sum -= rowAmt;
+            te.textContent = sum;
+            tr.remove();
+          });
+
+          actionTd.appendChild(ed);
+          actionTd.appendChild(b);
+          tr.appendChild(actionTd);
+
+          l.appendChild(tr);
+
+          sum += newAmount;
+          te.textContent = sum;
+        }
+
+        // Reset Inputs
+        en.value = "";
+        a.value = "";
+        c.value = "";
+        date.value = "";
+      });
+    </script>
   </body>
-  <script>
-    const en = document.getElementById("en");
-    const a = document.getElementById("a");
-    const c = document.getElementById("c");
-    const date = document.getElementById("date");
-    const addexpenses = document.getElementById("addexpenses");
-    const te = document.getElementById("te");
-    const l = document.getElementById("l");
-    addexpenses.addEventListener("click", () => {
-      const tr = document.createElement("tr");
-      const th1 = document.createElement("td");
-      const th2 = document.createElement("td");
-      const th3 = document.createElement("td");
-      const th4 = document.createElement("td");
-      th1.textContent = `${en.value}`;
-      th2.textContent = `${a.value}`;
-      th3.textContent = `${c.value}`;
-      th4.textContent = `${date.value}`;
-    //   te.textContent=te.textContent)+a.value
-      tr.appendChild(th1);
-      tr.appendChild(th2);
-      tr.appendChild(th3);
-      tr.appendChild(th4);
-      const b=document.createElement("button")
-      b.textContent="delete"
-      b.addEventListener("click",()=>{
-        tr.remove()
-      })
-      tr.append(b)
-      l.appendChild(tr);
-    });
-  </script>
 </html>
